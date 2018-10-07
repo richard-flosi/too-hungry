@@ -38,10 +38,6 @@ export default class extends React.Component {
       const maxY = this.gameBoard.clientHeight - 20;
       const midX = Math.round((maxX / 2) / moveBy) * moveBy;
       const midY = Math.round((maxY / 2) / moveBy) * moveBy;
-      console.log("maxX", maxX);
-      console.log("maxY", maxY);
-      console.log("midX", midX);
-      console.log("midY", midY);
       this.setState({
         initialized: true,
         gameOver: false,
@@ -280,12 +276,18 @@ export default class extends React.Component {
         <br />
         <h1>Don't Get Too Hungry!</h1>
         <br />
+        <br />
         <button
           style={{ width: 250, height: 50, backgroundColor: "black", color: "white", cursor: "pointer" }}
           onClick={this.play.bind(this)}
         >
           <h3>PLAY</h3>
         </button>
+        <br />
+        <br />
+        <h2 style={{ color: "black" }}>Instructions</h2>
+        <p style={{ color: "white" }}>Press the <b style={{ color: "black" }}>Space Bar</b> to pick up carrots.</p>
+        <p style={{ color: "white" }}>Press <b style={{ color: "black" }}>e</b> to eat a carrot from your inventory.</p>
       </div>
     );
   }
