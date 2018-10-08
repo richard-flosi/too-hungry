@@ -34,8 +34,8 @@ export default class extends React.Component {
   initialize({ initialized, moveBy } = this.state) {
     if (!initialized) {
       this.gameBoard.focus(); 
-      const maxX = this.gameBoard.clientWidth - 20;
-      const maxY = this.gameBoard.clientHeight - 20;
+      const maxX = this.gameBoard.clientWidth - 50;
+      const maxY = this.gameBoard.clientHeight - 50;
       const midX = Math.round((maxX / 2) / moveBy) * moveBy;
       const midY = Math.round((maxY / 2) / moveBy) * moveBy;
       this.setState({
@@ -103,7 +103,7 @@ export default class extends React.Component {
   moveLeft({ bounds, player, moveBy } = this.state) {
     let x = player.x - moveBy;
     if (x < bounds.minX) {
-      x = bounds.minX;
+      x = player.x;
     }
     this.setState({
       player: { 
@@ -115,7 +115,7 @@ export default class extends React.Component {
   moveRight({ bounds, player, moveBy } = this.state) {
     let x = player.x + moveBy;
     if (x > bounds.maxX) {
-      x = bounds.maxX;
+      x = player.x;
     }
     this.setState({
       player: {
@@ -127,7 +127,7 @@ export default class extends React.Component {
   moveUp({ bounds, player, moveBy } = this.state) {
     let y = player.y - moveBy;
     if (y < bounds.minY) {
-      y = bounds.minY;
+      y = player.y;
     }
     this.setState({
       player: {
@@ -139,7 +139,7 @@ export default class extends React.Component {
   moveDown({ bounds, player, moveBy } = this.state) {
     let y = player.y + moveBy;
     if (y > bounds.maxY) {
-      y = bounds.maxY;
+      y = player.y;
     }
     this.setState({
       player: {
@@ -160,7 +160,6 @@ export default class extends React.Component {
   }
   pickCarrot({ player, carrots } = this.state) {
     const foundCarrot = carrots.find((carrot) => {
-      console.log("foundCarrot", foundCarrot, player, carrot, (player.x === carrot.x && player.y === carrot.y));
       return (player.x === carrot.x && player.y === carrot.y);
     });
     if (foundCarrot) {
