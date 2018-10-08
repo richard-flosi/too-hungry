@@ -1,12 +1,13 @@
 .GameBoard {
   width: calc(100vw - 50px);
   height: calc(100vh - 50px);
-  border: 10px solid brown;
+  border: 1px solid sienna;
   border-radius: 5px;
   box-sizing: border-box;
   margin: 25px;
   padding: 25px;
   position: relative;
+  background-color: sienna;
 }
 
 .GameBoard:focus {
