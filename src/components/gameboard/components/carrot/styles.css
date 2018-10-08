@@ -1,10 +1,5 @@
 .Carrot {
-  display: inline-block;
+  position: absolute;
   width: 20px;
   height: 20px;
-  border: 1px solid black;
-  border-top: 2px solid green;
-  box-sizing: border-box;
-  background-color: orange;
-  position: absolute;
 }

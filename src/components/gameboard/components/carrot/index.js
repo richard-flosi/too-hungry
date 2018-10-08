@@ -1,5 +1,6 @@
 import React from "react";
 import "./styles.css";
+import carrot from "./carrot.svg";
 
 export default class extends React.Component {
   static displayName = "Carrot";
@@ -9,7 +10,7 @@ export default class extends React.Component {
       top: y,
     };
     return (
-      <span className="Carrot" style={style}></span>
+      <img className="Carrot" src={carrot} alt="carrot" style={style} />
     );
   }
 }
