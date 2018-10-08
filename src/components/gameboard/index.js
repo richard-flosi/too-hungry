@@ -1,8 +1,11 @@
 import React from "react";
 import "./styles.css";
 
-import Player from "./components/player";
 import Carrot from "./components/carrot";
+import Player from "./components/player";
+
+import carrot from "./components/carrot/carrot.svg";
+import player from "./components/player/player.svg";
 
 export default class extends React.Component {
   static displayName = "GameBoard";
@@ -272,6 +275,8 @@ export default class extends React.Component {
   renderMenu() {
     return (
       <div style={{ height: "100vh", backgroundColor: "green", color: "orange", textAlign: "center" }}>
+        <img src={player} alt="player" height={400} style={{ position: "absolute", top: 20, left: 20 }} />
+        <img src={carrot} alt="carrot" height={400} style={{ position: "absolute", top: 20, right: 20 }} />
         <br />
         <br />
         <h1>Don't Get Too Hungry!</h1>
