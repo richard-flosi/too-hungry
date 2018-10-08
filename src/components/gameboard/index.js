@@ -47,6 +47,7 @@ export default class extends React.Component {
           minY: 0,
           maxY,
         },
+        carrots: [],
         player: {
           hunger: 100,
           carrots: 0,
