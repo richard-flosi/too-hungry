@@ -265,8 +265,8 @@ export default class extends React.Component {
         onKeyPress={this.onKeyPress.bind(this)}
         ref={(ref) => { this.gameBoard = ref; this.initialize(); }}
       >
-        {this.renderCarrots()}
         {this.renderPlayer()}
+        {this.renderCarrots()}
         {this.renderHunger()}
         {this.renderInventory()}
       </div>
