@@ -4,9 +4,9 @@ import {
   Route,
 } from "react-router-dom";
 
-import Menu from "./components/menu";
-import GameBoard from "./components/gameboard";
-import GameOver from "./components/gameover";
+import Menu from "./screens/menu";
+import GameBoard from "./screens/gameboard";
+import GameOver from "./screens/gameover";
 
 export default class extends React.Component {
   static displayName = "App";

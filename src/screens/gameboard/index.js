@@ -3,6 +3,8 @@ import "./styles.css";
 
 import Hunger from "./components/hunger";
 import Inventory from "./components/inventory";
+import Calendar from "./components/calendar";
+import Score from "./components/score";
 import Carrot from "./components/carrot";
 import Player from "./components/player";
 
@@ -11,6 +13,9 @@ export default class extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
+      startTime: 0,
+      time: 0,
+      score: 0,
       moveBy: 10,
       bounds: {
         minX: 0,
@@ -38,6 +43,9 @@ export default class extends React.Component {
     const midX = maxX / 2;
     const midY = maxY / 2;
     this.setState({
+      startTime: Date.now(),
+      time: 0,
+      score: 0,
       bounds: {
         minX: 0,
         maxX,
@@ -56,9 +64,13 @@ export default class extends React.Component {
         x: midX,
         y: midY,
       },
+      timeInterval: setInterval(() => this.generateTime(), 60),
       carrotInterval: setInterval(() => this.generateCarrot(), 5000),
       hungerInterval: setInterval(() => this.generateHunger(), 10000),
     });
+  }
+  generateTime({ startTime } = this.state) {
+    this.setState({ time: Math.round((Date.now() - startTime) / 1000) });
   }
   generateCarrot({ bounds, carrots, maxCarrots, moveBy } = this.state) {
     let x = Math.round(Math.random() * bounds.maxX / moveBy) * moveBy;
@@ -153,12 +165,13 @@ export default class extends React.Component {
         return;
     }
   }
-  pickCarrot({ player, carrots } = this.state) {
+  pickCarrot({ score, player, carrots } = this.state) {
     const foundCarrot = carrots.find((carrot) => {
       return (player.x === carrot.x && player.y === carrot.y);
     });
     if (foundCarrot) {
       this.setState({
+        score: score + 5,
         carrots: carrots.filter(
           (carrot) => {
             if (player.x === carrot.x && player.y === carrot.y) {
@@ -175,9 +188,10 @@ export default class extends React.Component {
       });  
     }
   }
-  eatCarrot({ player } = this.state) {
+  eatCarrot({ score, player } = this.state) {
     if (player.carrots > 0) {
       this.setState({
+        score: score + 5,
         player: {
           ...player,
           hunger:  Math.min(Math.max(parseInt(player.hunger + 5), 1), 100),
@@ -188,18 +202,22 @@ export default class extends React.Component {
   }
   render() {
     return (
-      <div
-        className="GameBoard"
-        tabIndex="1"
-        onKeyDown={(event) => this.onKeyDown(event)}
-        onKeyPress={(event) => this.onKeyPress(event)}
-        ref={(ref) => { this.gameBoard = ref; }}
-      >
-        <Player x={this.state.player.x} y={this.state.player.y} />
-        {this.state.carrots.map(({ x, y }, index) => <Carrot key={`carrot-${index}-${x}-${y}`} x={x} y={y} />)}
+      <React.Fragment>
+        <div
+          className="GameBoard"
+          tabIndex="1"
+          onKeyDown={(event) => this.onKeyDown(event)}
+          onKeyPress={(event) => this.onKeyPress(event)}
+          ref={(ref) => { this.gameBoard = ref; }}
+        >
+          <Player x={this.state.player.x} y={this.state.player.y} />
+          {this.state.carrots.map(({ x, y }, index) => <Carrot key={`carrot-${index}-${x}-${y}`} x={x} y={y} />)}
+        </div>
+        <Calendar time={this.state.time} />
+        <Score score={this.state.score} />
         <Hunger hunger={this.state.player.hunger} />
         <Inventory player={this.state.player} />
-      </div>
+      </React.Fragment>
     );
   }
 }
