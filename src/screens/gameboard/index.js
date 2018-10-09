@@ -23,6 +23,7 @@ export default class extends React.Component {
         minY: 0,
         maxY: 0,
       },
+      timeInterval: null,
       carrotInterval: null,
       hungerInterval: null,
       carrots: [],
@@ -88,6 +89,7 @@ export default class extends React.Component {
         }
       });
     } else {
+      clearInterval(timeInterval);
       clearInterval(carrotInterval);
       clearInterval(hungerInterval);
       window.location = "/gameover";
