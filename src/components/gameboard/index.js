@@ -1,11 +1,12 @@
 import React from "react";
 import "./styles.css";
 
+import Menu from "./components/menu";
+import Hunger from "./components/hunger";
+import Inventory from "./components/inventory";
+import GameOver from "./components/gameover";
 import Carrot from "./components/carrot";
 import Player from "./components/player";
-
-import carrot from "./components/carrot/carrot.svg";
-import player from "./components/player/player.svg";
 
 export default class extends React.Component {
   static displayName = "GameBoard";
@@ -200,62 +201,6 @@ export default class extends React.Component {
   quit() {
     this.setState({ initialized: false, gameOver: false, playing: false });
   }
-  renderCarrot({ x, y }, index) {
-    return (
-      <Carrot key={`carrot-${index}-${x}-${y}`} x={x} y={y} />
-    );
-  }
-  renderCarrots({ carrots } = this.state) {
-    return carrots.map(this.renderCarrot);
-  }
-  renderPlayer({ x, y } = this.state.player) {
-    return (
-      <Player x={x} y={y} />
-    );
-  }
-  renderHunger({ hunger } = this.state.player) {
-    return (
-      <span style={{ width: 200, height: 50, backgroundColor: "pink", color: "black", opacity: 0.5 }}>
-        Hunger: {hunger}
-      </span>
-    );
-  }
-  renderInventory({ player } = this.state) {
-    return (
-      <span style={{ width: 200, height: 50, backgroundColor: "green", color: "orange", opacity: 0.5 }}>
-        Carrots: {player.carrots}
-      </span>
-    );
-  }
-  renderGameOver() {
-    return (
-      <div style={{ height: "100vh", backgroundColor: "pink", textAlign: "center" }}>
-        <br />
-        <br />
-        <h1>Don't Get Too Hungry!</h1>
-        <br />
-        <h2>GAME OVER</h2>
-        <br />
-        <br />
-        <br />
-        <button
-          style={{ width: 250, height: 50, backgroundColor: "black", color: "white", cursor: "pointer" }}
-          onClick={this.play.bind(this)}
-        >
-          <h3>TRY AGAIN</h3>
-        </button>
-        <br />
-        <br />
-        <br />
-        <button
-          style={{ width: 250, height: 50, border: "1px solid black", boxSizing: "border-box", backgroundColor: "white", color: "black", cursor: "pointer" }}
-          onClick={this.quit.bind(this)}
-        >
-          <h3>QUIT</h3>
-        </button>
-      </div>
-    );
-  }
   renderGameBoard() {
     return (
       <div
@@ -265,44 +210,29 @@ export default class extends React.Component {
         onKeyPress={this.onKeyPress.bind(this)}
         ref={(ref) => { this.gameBoard = ref; this.initialize(); }}
       >
-        {this.renderPlayer()}
-        {this.renderCarrots()}
-        {this.renderHunger()}
-        {this.renderInventory()}
-      </div>
-    );
-  }
-  renderMenu() {
-    return (
-      <div style={{ height: "100vh", backgroundColor: "green", color: "orange", textAlign: "center" }}>
-        <img src={player} alt="player" height={400} style={{ position: "absolute", top: 20, left: 20 }} />
-        <img src={carrot} alt="carrot" height={400} style={{ position: "absolute", top: 20, right: 20 }} />
-        <br />
-        <br />
-        <h1>Don't Get Too Hungry!</h1>
-        <br />
-        <br />
-        <button
-          style={{ width: 250, height: 50, backgroundColor: "black", color: "white", cursor: "pointer" }}
-          onClick={this.play.bind(this)}
-        >
-          <h3>PLAY</h3>
-        </button>
-        <br />
-        <br />
-        <h2 style={{ color: "black" }}>Instructions</h2>
-        <p style={{ color: "white" }}>Press the <b style={{ color: "black" }}>Space Bar</b> to pick up carrots.</p>
-        <p style={{ color: "white" }}>Press <b style={{ color: "black" }}>e</b> to eat a carrot from your inventory.</p>
+        <Player x={this.state.player.x} y={this.state.player.y} />
+        {this.state.carrots.map(({ x, y }, index) => <Carrot key={`carrot-${index}-${x}-${y}`} x={x} y={y} />)}
+        <Hunger hunger={this.state.player.hunger} />
+        <Inventory player={this.state.player} />
       </div>
     );
   }
   render({ playing, gameOver } = this.state) {
     if (gameOver) {
-      return this.renderGameOver();
+      return (
+        <GameOver
+          play={this.play.bind(this)}
+          quit={this.quit.bind(this)}
+        />
+      );
     } else if (playing) {
       return this.renderGameBoard();
     } else {
-      return this.renderMenu();
+      return (
+        <Menu
+          play={this.play.bind(this)}
+        />
+      );
     }
   }
 }
