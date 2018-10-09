@@ -1,10 +1,8 @@
 import React from "react";
 import "./styles.css";
 
-import Menu from "./components/menu";
 import Hunger from "./components/hunger";
 import Inventory from "./components/inventory";
-import GameOver from "./components/gameover";
 import Carrot from "./components/carrot";
 import Player from "./components/player";
 
@@ -13,9 +11,6 @@ export default class extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      initialized: false,
-      gameOver: false,
-      playing: false,
       moveBy: 10,
       bounds: {
         minX: 0,
@@ -35,45 +30,41 @@ export default class extends React.Component {
       },
     };
   }
-  initialize({ initialized, moveBy } = this.state) {
-    if (!initialized) {
-      this.gameBoard.focus(); 
-      const maxX = this.gameBoard.clientWidth - 50;
-      const maxY = this.gameBoard.clientHeight - 50;
-      const midX = Math.round((maxX / 2) / moveBy) * moveBy;
-      const midY = Math.round((maxY / 2) / moveBy) * moveBy;
-      this.setState({
-        initialized: true,
-        gameOver: false,
-        bounds: {
-          minX: 0,
-          maxX,
-          minY: 0,
-          maxY,
-        },
-        carrots: [],
-        player: {
-          hunger: 100,
-          carrots: 0,
-          x: midX,
-          y: midY,
-        },
-        carrotInterval: setInterval(this.generateCarrot.bind(this), 5000),
-        hungerInterval: setInterval(this.generateHunger.bind(this), 10000)
-      });
-    }
+  componentDidMount() {
+    const { moveBy } = this.state;
+    this.gameBoard.focus(); 
+    const maxX = Math.round(((this.gameBoard.clientWidth - 50)) / moveBy) * moveBy;
+    const maxY = Math.round(((this.gameBoard.clientHeight - 50)) / moveBy) * moveBy;
+    const midX = maxX / 2;
+    const midY = maxY / 2;
+    this.setState({
+      bounds: {
+        minX: 0,
+        maxX,
+        minY: 0,
+        maxY,
+      },
+      carrots: [
+        { x: 0, y: 0 },
+        { x: maxX, y: 0 },
+        { x: 0, y: maxY },
+        { x: maxX, y: maxY },
+      ],
+      player: {
+        hunger: 100,
+        carrots: 0,
+        x: midX,
+        y: midY,
+      },
+      carrotInterval: setInterval(() => this.generateCarrot(), 5000),
+      hungerInterval: setInterval(() => this.generateHunger(), 10000),
+    });
   }
   generateCarrot({ bounds, carrots, maxCarrots, moveBy } = this.state) {
+    let x = Math.round(Math.random() * bounds.maxX / moveBy) * moveBy;
+    let y = Math.round(Math.random() * bounds.maxY / moveBy) * moveBy;
     if (carrots.length < maxCarrots) {
-      this.setState({
-        carrots: [
-          ...carrots,
-          {
-            x: Math.round(Math.random() * bounds.maxX / moveBy) * moveBy,
-            y: Math.round(Math.random() * bounds.maxY / moveBy) * moveBy,
-          },
-        ],
-      });
+      this.setState({ carrots: [ ...carrots, { x, y } ] });
     }
   }
   generateHunger({ player, carrotInterval, hungerInterval } = this.state) {
@@ -87,7 +78,7 @@ export default class extends React.Component {
     } else {
       clearInterval(carrotInterval);
       clearInterval(hungerInterval);
-      this.setState({ gameOver: true });
+      window.location = "/gameover";
     }
   }
   onKeyDown(event) {
@@ -195,20 +186,14 @@ export default class extends React.Component {
       });
     }
   }
-  play() {
-    this.setState({ initialized: false, gameOver: false, playing: true });
-  }
-  quit() {
-    this.setState({ initialized: false, gameOver: false, playing: false });
-  }
-  renderGameBoard() {
+  render() {
     return (
       <div
         className="GameBoard"
         tabIndex="1"
-        onKeyDown={this.onKeyDown.bind(this)}
-        onKeyPress={this.onKeyPress.bind(this)}
-        ref={(ref) => { this.gameBoard = ref; this.initialize(); }}
+        onKeyDown={(event) => this.onKeyDown(event)}
+        onKeyPress={(event) => this.onKeyPress(event)}
+        ref={(ref) => { this.gameBoard = ref; }}
       >
         <Player x={this.state.player.x} y={this.state.player.y} />
         {this.state.carrots.map(({ x, y }, index) => <Carrot key={`carrot-${index}-${x}-${y}`} x={x} y={y} />)}
@@ -216,23 +201,5 @@ export default class extends React.Component {
         <Inventory player={this.state.player} />
       </div>
     );
-  }
-  render({ playing, gameOver } = this.state) {
-    if (gameOver) {
-      return (
-        <GameOver
-          play={this.play.bind(this)}
-          quit={this.quit.bind(this)}
-        />
-      );
-    } else if (playing) {
-      return this.renderGameBoard();
-    } else {
-      return (
-        <Menu
-          play={this.play.bind(this)}
-        />
-      );
-    }
   }
 }
