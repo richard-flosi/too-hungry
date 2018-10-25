@@ -13,7 +13,7 @@ export default class extends React.Component {
         <img src={carrot} alt="carrot" height={400} style={{ position: "absolute", top: 20, right: 20 }} />
         <br />
         <br />
-        <h1>Don't Get Too Hungry!</h1>
+        <h1>Don&apos;t Get Too Hungry!</h1>
         <br />
         <br />
         <a

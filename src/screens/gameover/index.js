@@ -8,7 +8,7 @@ export default class extends React.Component {
       <div style={{ height: "100vh", backgroundColor: "pink", textAlign: "center" }}>
         <br />
         <br />
-        <h1>Don't Get Too Hungry!</h1>
+        <h1>Don&apos;t Get Too Hungry!</h1>
         <br />
         <h2>GAME OVER</h2>
         <br />
