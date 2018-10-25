@@ -80,7 +80,7 @@ export default class extends React.Component {
       this.setState({ carrots: [ ...carrots, { x, y } ] });
     }
   }
-  generateHunger({ player, carrotInterval, hungerInterval } = this.state) {
+  generateHunger({ player, timeInterval, carrotInterval, hungerInterval } = this.state) {
     if (player.hunger > 10) {
       this.setState({
         player: {
