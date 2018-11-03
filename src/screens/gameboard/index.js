@@ -27,7 +27,7 @@ export default class extends React.Component {
       carrotInterval: null,
       hungerInterval: null,
       carrots: [],
-      maxCarrots: 10,
+      maxCarrots: 15,
       player: {
         hunger: 100,
         carrots: 0,
@@ -41,46 +41,48 @@ export default class extends React.Component {
     this.gameBoard.focus(); 
     const maxX = Math.round(((this.gameBoard.clientWidth - 50)) / moveBy) * moveBy;
     const maxY = Math.round(((this.gameBoard.clientHeight - 50)) / moveBy) * moveBy;
-    const midX = maxX / 2;
-    const midY = maxY / 2;
+    const bounds = {
+      minX: 0,
+      maxX,
+      minY: 0,
+      maxY,
+    };
     this.setState({
       startTime: Date.now(),
       time: 0,
       score: 0,
-      bounds: {
-        minX: 0,
-        maxX,
-        minY: 0,
-        maxY,
-      },
+      bounds,
       carrots: [
-        { x: 0, y: 0 },
-        { x: maxX, y: 0 },
-        { x: 0, y: maxY },
-        { x: maxX, y: maxY },
+        this.createRandomXY({ bounds, moveBy }),
+        this.createRandomXY({ bounds, moveBy }),
+        this.createRandomXY({ bounds, moveBy }),
+        this.createRandomXY({ bounds, moveBy }),
+        this.createRandomXY({ bounds, moveBy }),
       ],
       player: {
         hunger: 100,
         carrots: 0,
-        x: midX,
-        y: midY,
+        ...this.createRandomXY({ bounds, moveBy }),
       },
       timeInterval: setInterval(() => this.generateTime(), 60),
       carrotInterval: setInterval(() => this.generateCarrot(), 5000),
       hungerInterval: setInterval(() => this.generateHunger(), 10000),
     });
   }
+  createRandomXY({ bounds, moveBy } = this.state) {
+    const x = Math.round(Math.random() * bounds.maxX / moveBy) * moveBy;
+    const y = Math.round(Math.random() * bounds.maxY / moveBy) * moveBy;
+    return { x, y };
+  }
   generateTime({ startTime } = this.state) {
     this.setState({ time: Math.round((Date.now() - startTime) / 1000) });
   }
-  generateCarrot({ bounds, carrots, maxCarrots, moveBy } = this.state) {
-    let x = Math.round(Math.random() * bounds.maxX / moveBy) * moveBy;
-    let y = Math.round(Math.random() * bounds.maxY / moveBy) * moveBy;
+  generateCarrot({ carrots, maxCarrots } = this.state) {
     if (carrots.length < maxCarrots) {
-      this.setState({ carrots: [ ...carrots, { x, y } ] });
+      this.setState({ carrots: [ ...carrots, this.createRandomXY() ] });
     }
   }
-  generateHunger({ player, timeInterval, carrotInterval, hungerInterval } = this.state) {
+  generateHunger({ player, timeInterval, carrotInterval, hungerInterval, time, score } = this.state) {
     if (player.hunger > 10) {
       this.setState({
         player: {
@@ -92,7 +94,7 @@ export default class extends React.Component {
       clearInterval(timeInterval);
       clearInterval(carrotInterval);
       clearInterval(hungerInterval);
-      window.location = "/gameover";
+      window.location = `/gameover?time=${time}&score=${score}&hunger=${player.hunger}&carrots=${player.carrots}`;
     }
   }
   onKeyDown(event) {
@@ -167,36 +169,54 @@ export default class extends React.Component {
         return;
     }
   }
-  pickCarrot({ score, player, carrots } = this.state) {
-    const foundCarrot = carrots.find((carrot) => {
-      return (player.x === carrot.x && player.y === carrot.y);
+  findCarrots({ player, carrots } = this.state) {
+    const width = 50;
+    const height = 50;
+    let foundCarrots = [];
+    let remainingCarrots = [];
+    carrots.forEach((carrot) => {
+      if (player.x < carrot.x + width &&
+        player.x + width > carrot.x &&
+        player.y < carrot.y + height &&
+        player.y + height > carrot.y) {
+         foundCarrots.push(carrot);
+      } else {
+        remainingCarrots.push(carrot);
+      }
     });
-    if (foundCarrot) {
+    return { foundCarrots, remainingCarrots };
+  }
+  pickCarrot({ score, player } = this.state) {
+    const { foundCarrots, remainingCarrots } = this.findCarrots();
+    const numberOfFoundCarrots = foundCarrots.length;
+    const playerCarrots = player.carrots + numberOfFoundCarrots;
+    if (numberOfFoundCarrots > 0) {
       this.setState({
-        score: score + 5,
-        carrots: carrots.filter(
-          (carrot) => {
-            if (player.x === carrot.x && player.y === carrot.y) {
-              return false;
-            } else {
-              return true;
-            }
-          }
-        ),
+        score: score + (numberOfFoundCarrots * 5),
+        carrots: remainingCarrots,
         player: {
           ...player,
-          carrots: player.carrots + 1,
+          carrots: playerCarrots,
         }
-      });  
+      }, () => {
+        const { time, score, player } = this.state;
+        if (player.carrots >= 20) {
+          window.location = `/youwin?time=${time}&score=${score}&hunger=${player.hunger}&carrots=${player.carrots}`;
+        }
+      });
     }
   }
   eatCarrot({ score, player } = this.state) {
+    let hunger = player.hunger + 5;
+    if (hunger > 100) {
+      hunger = 100;
+    }
     if (player.carrots > 0) {
       this.setState({
         score: score + 5,
         player: {
           ...player,
-          hunger:  Math.min(Math.max(parseInt(player.hunger + 5), 1), 100),
+          hunger,
           carrots: player.carrots - 1,
         }
       });

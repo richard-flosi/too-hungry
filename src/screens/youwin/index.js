@@ -2,7 +2,7 @@ import React from "react";
 import "./styles.css";
 
 export default class extends React.Component {
-  static displayName = "GameOver";
+  static displayName = "YouWin";
   render() {
     const params = new URLSearchParams(document.location.search.substring(1));
     const time = params.get("time");
@@ -10,12 +10,14 @@ export default class extends React.Component {
     const hunger = params.get("hunger");
     const carrots = params.get("carrots");
     return (
-      <div style={{ height: "100vh", backgroundColor: "pink", textAlign: "center" }}>
+      <div style={{ height: "100vh", backgroundColor: "green", textAlign: "center" }}>
         <br />
         <br />
         <h1>Don&apos;t Get Too Hungry!</h1>
         <br />
-        <h2>GAME OVER</h2>
+        <h2 style={{ color: "orange" }}>YOU WIN</h2>
+        <br />
+        <p>Congratulations you collected 20 carrots.</p>
         <br />
         <p>You survived {time} seconds.</p>
         <p>Score: {score}</p>

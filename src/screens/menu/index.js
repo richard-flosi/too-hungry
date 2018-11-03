@@ -25,6 +25,7 @@ export default class extends React.Component {
         <br />
         <br />
         <h2 style={{ color: "black" }}>Instructions</h2>
+        <p style={{ color: "orange" }}><b>Collect 20 carrots to win.</b></p>
         <p style={{ color: "white" }}>Use the <b style={{ color: "black" }}>Arrow Keys</b> to move.</p>
         <p style={{ color: "white" }}>Press the <b style={{ color: "black" }}>Space Bar</b> to pick up carrots.</p>
         <p style={{ color: "white" }}>Press <b style={{ color: "black" }}>e</b> to eat a carrot from your inventory.</p>
